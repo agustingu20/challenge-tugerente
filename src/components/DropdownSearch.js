@@ -49,7 +49,6 @@ export default function DropdownSearch() {
             )
             setCustomer(fetchedCustomer.data.results)
             setCustomerFilter(fetchedCustomer.data.results)
-            // }
         }
         window.onscroll = function miFuncion() {
             var scroll = document.getElementById("divScroll").scrollTop;
@@ -69,7 +68,7 @@ export default function DropdownSearch() {
                     onClick={() => setOpen(!open)}
                     aria-expanded={open}
                 >
-                    <FormControl aria-label="Text input with dropdown button" />
+                    <FormControl aria-label="Text input with dropdown button" defaultValue={"Ingrese un nombre o busque en el listado"} />
                     <Button
                         variant="outline-primary"
                         className='btn-sm'
@@ -92,7 +91,8 @@ export default function DropdownSearch() {
                                         >
                                             {customer.name}
                                         </button>
-                                    ))}
+                                    ))
+                                }
                             </div>
                         </div>
                     </Collapse>
