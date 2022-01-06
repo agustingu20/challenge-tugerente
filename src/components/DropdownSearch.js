@@ -53,7 +53,7 @@ export default function DropdownSearch() {
         }
         window.onscroll = function miFuncion() {
             var scroll = document.getElementById("divScroll").scrollTop;
-            if (scroll > 358) {
+            if (scroll > 365) {
                 setCurrentSkip(currentSkip + 20)
             }
         }
