@@ -6,20 +6,22 @@ import axios from 'axios';
 
 export default function DropdownSearch() {
     const [customer, setCustomer] = useState([])
-    console.log("DropdownSearch ~ customer", customer)
     const [customerFilter, setCustomerFilter] = useState([])
-    console.log("DropdownSearch ~ customerFilter", customerFilter)
     const [currentSkip, setCurrentSkip] = useState(0)
-    console.log("DropdownSearch ~ currentSkip", currentSkip)
-    // const [selectedCustomer, setSelectedCustomer] = useState({})
+    const [selectedCustomer, setSelectedCustomer] = useState({})
 
     const [open, setOpen] = useState(false);
 
     const [show, setShow] = useState(false);
 
     const handleClose = () => setShow(false);
-    const handleShow = () => setShow(true);
 
+    const handleShow = (e) => {
+        const customerId = e.target.value;
+        const customerSelected = customer.find((cliente) => cliente.id === JSON.parse(customerId))
+        setSelectedCustomer(customerSelected)
+        setShow(true);
+    }
 
 
     const handleChange = (e) => {
@@ -30,14 +32,13 @@ export default function DropdownSearch() {
                 return nombreEnMinuscula.includes(value)
             })
         setCustomerFilter(customerFiltered);
-        console.log("handleChange ~ value", value)
     }
 
     useEffect(() => {
         const fetchCustomer = async () => {
-            const apikey = "zq06klJqT3V0NSbmmu4FP6YG0IWvio2HmvFMaHro"
+            const apikey = process.env.REACT_APP_APIKEY
             const filters = `{ "filter": { "filters": [{ "field": "reference_name", "operator": "contains", "ignoreCase": true, "value": "" }, { "field": "nit", "operator": "contains", "ignoreCase": true, "value": "" }, { "field": "name", "operator": "contains", "ignoreCase": true, "value": "" }, { "field": "reference_name", "operator": "contains", "ignoreCase": true, "value": "" }], "logic": "or" }, "skip": ${currentSkip}, "take": 20 }`
-            const url = "https://back.implementaconbubo.com/v1/sales/customer/"
+            const url = process.env.REACT_APP_API_URL
             const fetchedCustomer = await axios.get(url,
                 {
                     headers: {
@@ -46,7 +47,6 @@ export default function DropdownSearch() {
                     }
                 }
             )
-            console.log("handleChange ~ fetchedCustomer", fetchedCustomer.data.results)
             setCustomer(fetchedCustomer.data.results)
             setCustomerFilter(fetchedCustomer.data.results)
             // }
@@ -85,7 +85,7 @@ export default function DropdownSearch() {
                                 {
                                     customerFilter.map((customer) => (
                                         <button
-                                            className='btn btn-sm btn-outline-success d-flex d-column mt-2'
+                                            className='btn btn-sm btn-outline-success d-flex d-column m-2'
                                             onClick={handleShow}
                                             value={`${customer.id}`}
                                             key={`customer-${customer.id}`}
@@ -100,15 +100,19 @@ export default function DropdownSearch() {
 
                 <Modal show={show} onHide={handleClose}>
                     <Modal.Header closeButton>
-                        <Modal.Title>{ }</Modal.Title>
+                        <Modal.Title>{selectedCustomer.name}</Modal.Title>
                     </Modal.Header>
-                    <Modal.Body>Woohoo, you're reading this text in a modal!</Modal.Body>
+                    <Modal.Body>
+                        <ul>
+                            <li>Ciudad: {selectedCustomer.city}</li>
+                            <li>País: {selectedCustomer.country}</li>
+                            <li>Teléfono: {selectedCustomer.contact_phone}</li>
+                            <li>Email: {selectedCustomer.business_email}</li>
+                        </ul>
+                    </Modal.Body>
                     <Modal.Footer>
                         <Button variant="secondary" onClick={handleClose}>
                             Close
-                        </Button>
-                        <Button variant="primary" onClick={handleClose}>
-                            Save Changes
                         </Button>
                     </Modal.Footer>
                 </Modal>
